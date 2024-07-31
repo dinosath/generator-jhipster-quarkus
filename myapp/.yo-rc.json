@@ -1,0 +1,32 @@
+{
+  "generator-jhipster": {
+    "applicationType": "monolith",
+    "authenticationType": "oauth2",
+    "baseName": "jhipsterSampleApplication",
+    "blueprints": [
+      {
+        "name": "generator-jhipster-quarkus",
+        "version": "3.2.0"
+      }
+    ],
+    "buildTool": "maven",
+    "cacheProvider": "redis",
+    "creationTimestamp": 1722453412427,
+    "databaseType": "sql",
+    "devDatabaseType": "postgresql",
+    "devServerPort": 4200,
+    "enableHibernateCache": false,
+    "entities": ["Blog", "Post", "Tag"],
+    "jhipsterVersion": "8.5.0",
+    "languages": ["en"],
+    "lastLiquibaseTimestamp": 1722453322000,
+    "monorepository": true,
+    "nativeLanguage": "en",
+    "packageFolder": "io/github/jhipster/sample",
+    "packageName": "io.github.jhipster.sample",
+    "prodDatabaseType": "postgresql",
+    "skipCommitHook": true,
+    "skipUserManagement": true,
+    "testFrameworks": ["cypress"]
+  }
+}

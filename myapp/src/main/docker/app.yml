@@ -1,0 +1,35 @@
+# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+name: jhipstersampleapplication
+services:
+  app:
+    image: jhipstersampleapplication
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+    ports:
+      - 127.0.0.1:8080:8080
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8080/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+  postgresql:
+    extends:
+      file: ./postgresql.yml
+      service: postgresql
+  keycloak:
+    extends:
+      file: ./keycloak.yml
+      service: keycloak
+  redis:
+    extends:
+      file: ./redis.yml
+      service: redis
