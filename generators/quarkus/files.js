@@ -167,6 +167,10 @@ export const serverFiles = {
             templates: ['service/dto/ManagementInfoDTO.java', 'service/ManagementInfoService.java'],
         }),
         javaMainPackageTemplatesBlock({
+            condition: generator => generator.addCsvSerde,
+            templates: ['service/GenericCsvMessageBodyReader.java.java', 'service/GenericCsvMessageBodyWriter.java'],
+        }),
+        javaMainPackageTemplatesBlock({
             condition: generator => generator.databaseType === 'mongodb',
             templates: ['service/IdGenerator.java', 'service/StringIdGenerator.java'],
         }),

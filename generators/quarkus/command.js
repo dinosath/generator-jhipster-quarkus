@@ -127,6 +127,18 @@ const command = {
             ],
             scope: 'storage',
         },
+        addCsvSerde:{
+            description: 'Add csv serde support',
+            cli: {
+                type: Boolean,
+            },
+            prompt: gen => ({
+                type: 'confirm',
+                message: 'Do you want to add csv serde support?',
+                default: true,
+            }),
+            scope: 'storage',
+        },
         enableHibernateCache: {
             description: 'Enable hibernate cache',
             cli: {
