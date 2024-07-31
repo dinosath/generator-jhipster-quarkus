@@ -67,7 +67,7 @@ public class UserService {
 
     final BCryptPasswordHasher passwordHasher;
 
-    <%_ if (cacheProvider === 'redis') { _%>
+    <%_ if (cacheProvider === 'redis' && !skipUserManagement) { _%>
     @Inject
     UserRedisCache userRedisCache;
     <%_ } _%>
@@ -361,7 +361,7 @@ public class UserService {
     }
 
     public Optional<User> getUserWithAuthoritiesByLogin(String login) {
-    <%_ if (cacheProvider === 'redis') { _%>
+    <%_ if (cacheProvider === 'redis' && !skipUserManagement) { _%>
         return userRedisCache.get(login, () -> User.findOneWithAuthoritiesByLogin(login));
     <%_ } else { _%>
         return User.findOneWithAuthoritiesByLogin(login);
@@ -378,7 +378,7 @@ public class UserService {
 
     <%_ if (cacheProviderAny) { _%>
     public void clearUserCaches(User user) {
-        <%_ if (cacheProvider === 'redis') { _%>
+        <%_ if (cacheProvider === 'redis' && !skipUserManagement) { _%>
         List <Object> keys = new ArrayList<>();
         keys.add(user.login);
 

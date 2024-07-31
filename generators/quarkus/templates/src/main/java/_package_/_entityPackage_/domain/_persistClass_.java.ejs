@@ -52,12 +52,19 @@ const uniqueEnums = {};
     }
 _%>
 <%_ if (databaseType === 'sql') { _%>
+    <%_ if (reactive) { _%>
+import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
+    <%} else { %>
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+    <%_ } _%>
 <%_ } _%>
-import jakarta.json.bind.annotation.JsonbTransient;
 <%_ if (!viaRepository) { _%>
 <%_ if (databaseType === 'sql') { _%>
+    <%_ if (reactive) { _%>
+import io.quarkus.hibernate.reactive.panache.PanacheQuery;
+    <%} else { %>
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
+    <%_ } _%>
 <%_ } _%>
 <%_ } _%>
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -226,7 +233,6 @@ public class <%= persistClass %> extends <% if (databaseType === 'sql') { %>Pana
         if (fieldType === 'byte[]') { _%>
     @Lob
         <%_ if ((prodDatabaseType === 'postgresql' || devDatabaseType === 'postgresql') && fieldTypeBlobContent === 'text' ) { _%>
-    @Type(type = "org.hibernate.type.TextType")
         <%_ }
         }
         if (['Instant', 'ZonedDateTime', 'LocalDate', 'Duration'].includes(fieldType)) { _%>
@@ -353,14 +359,12 @@ public class <%= persistClass %> extends <% if (databaseType === 'sql') { %>Pana
         <%_ } _%>
     @Field("<%= relationshipFieldNamePlural %>")
         <%_ if (databaseType === 'couchbase') { _%>
-    @JsonbTransient
     public Set<String> <%= relationshipFieldName %>Ids = new HashSet<>();
 
     @N1qlJoin(on = "lks.<%= relationshipFieldNamePlural %>=meta(rks).id", fetchType = FetchType.IMMEDIATE)
         <%_ }
          } if (ownerSide === false) { _%>
     <%_ } _%>
-    @JsonbTransient
     public Set<<%= otherEntity.persistClass %>> <%= relationshipFieldNamePlural %> = new HashSet<>();
 
     <%_ } else {

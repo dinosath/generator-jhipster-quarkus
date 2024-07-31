@@ -18,9 +18,13 @@
 -%>
 <%_ if (!viaService) { _%>
     <%_ if (!viaRepository) { _%>
+        <%_ if (reactive) { _%>
+            <%= entityClass %>.deleteById(id)
+        <%_ } else { _%>
         <%= entityClass %>.findByIdOptional(id).ifPresent(<%= entityInstance %> -> {
             <%= entityInstance %>.delete();
         });
+        <%_ } _%>
     <%_ } else {_%>
         <%= entityInstance %>Repository.findByIdOptional(id).ifPresent(<%= entityInstance %> -> {
             <%= entityInstance %>Repository.delete(<%= entityInstance %>);

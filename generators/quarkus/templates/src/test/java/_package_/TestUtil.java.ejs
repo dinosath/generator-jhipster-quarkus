@@ -35,9 +35,6 @@ import io.restassured.mapper.ObjectMapperSerializationContext;
 <%_ if(authenticationType === 'oauth2') { _%>
 import <%=packageName%>.infrastructure.MockOidcServerTestResource;
 <%_ } _%>
-import jakarta.json.bind.Jsonb;
-import jakarta.json.bind.JsonbBuilder;
-import jakarta.json.bind.JsonbConfig;
 <%_ if(!skipUserManagement) { _%>
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
@@ -114,23 +111,6 @@ public final class TestUtil {
     }
 
 <%_ } _%>
-    public static ObjectMapper jsonbObjectMapper() {
-        final var config = new JsonbConfig().withDateFormat(DATE_TIME_FORMAT, null);
-        final Jsonb jsonb = JsonbBuilder.create(config);
-        return new ObjectMapper() {
-
-            @Override
-            public Object deserialize(ObjectMapperDeserializationContext context) {
-                return jsonb.fromJson(context.getDataToDeserialize().asString(), context.getType());
-            }
-
-            @Override
-            public Object serialize(ObjectMapperSerializationContext context) {
-                return jsonb.toJson(context.getObjectToSerialize());
-            }
-        };
-    }
-
     public static byte[] createByteArray(int size, String data) {
         byte[] byteArray = new byte[size];
         for (int i = 0; i < size; i++) {

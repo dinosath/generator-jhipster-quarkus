@@ -17,10 +17,17 @@
  limitations under the License.
 -%>
     <%_ if (databaseType === 'sql') { _%>
+        <%_ if (reactive) { _%>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-reactive-panache</artifactId>
+        </dependency>            
+        <%} else { %>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-orm-panache</artifactId>
         </dependency>
+        <% } %>
     <%_ } _%>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -45,10 +52,17 @@
         </dependency>
     <%_ } _%>
     <%_ if (prodDatabaseType === 'postgresql') { _%>
+        <%_ if (reactive) { _%>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-reactive-pg-client</artifactId>
+        </dependency>
+        <%} else { %>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jdbc-postgresql</artifactId>
         </dependency>
+        <% } %>
     <%_ } _%>
     <%_ if (databaseType === 'sql') { _%>
     <%_ if (prodDatabaseType !== devDatabaseType) { _%>

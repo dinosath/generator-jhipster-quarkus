@@ -58,7 +58,7 @@
         return response.build();
     }
     <%_ } else { _%>
-    public List<<%= restClass %>> getAll<%= entityClassPlural %>(<% if (fieldsContainNoOwnerOneToOne) { %>@RequestParam(required = false) String filter<% } %><% if (fieldsContainOwnerManyToMany && fieldsContainNoOwnerOneToOne) { %>,<% } %><% if (fieldsContainOwnerManyToMany) { %>@QueryParam(value = "eagerload") boolean eagerload<% }%>) {
+    public <%_ if (reactive) { _%>Uni<<%_ } _%>List<<%= restClass %>><%_ if (reactive) { _%>><%_ } _%> getAll<%= entityClassPlural %>(<% if (fieldsContainNoOwnerOneToOne) { %>@RequestParam(required = false) String filter<% } %><% if (fieldsContainOwnerManyToMany && fieldsContainNoOwnerOneToOne) { %>,<% } %><% if (fieldsContainOwnerManyToMany) { %>@QueryParam(value = "eagerload") boolean eagerload<% }%>) {
         log.debug("REST request to get all <%= entityClassPlural %>");
         <%_ if (viaService) { _%>
         return <%= entityInstance %>Service.findAll();

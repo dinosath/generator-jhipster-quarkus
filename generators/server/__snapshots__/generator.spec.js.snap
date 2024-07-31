@@ -83,9 +83,6 @@ exports[`SubGenerator server of quarkus JHipster blueprint > run > should succee
   "src/main/java/com/mycompany/myapp/config/JHipsterProperties.java": {
     "stateCleared": "modified",
   },
-  "src/main/java/com/mycompany/myapp/config/JsonbConfiguration.java": {
-    "stateCleared": "modified",
-  },
   "src/main/java/com/mycompany/myapp/config/LocalDateProvider.java": {
     "stateCleared": "modified",
   },

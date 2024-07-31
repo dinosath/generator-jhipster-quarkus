@@ -36,14 +36,19 @@ import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 class RedisCacheTest {
     @Inject
     FooRedisCache fooRedisCache;
+
+    <%_ if (!skipUserManagement) { _%>
     @Inject
     UserRedisCache userRedisCache;
+    <%_ } _%>
 
     private final String FOO_PREFIX = "Foo:";
 
     @BeforeEach
     public void clearCache() {
+        <%_ if (!skipUserManagement) { _%>
         userRedisCache.clear();
+        <%_ } _%>
         fooRedisCache.clear();
     }
 
@@ -209,6 +214,7 @@ class RedisCacheTest {
         assertThat(fooRedisCache.serialize(null)).isNull();
     }
 
+    <%_ if (!skipUserManagement) { _%>
     @Test
     void should_StoreTwoDifferentReturnOneByCacheType() {
         Foo foo = foo();
@@ -223,4 +229,5 @@ class RedisCacheTest {
         assertThat(fooKeysAfterSet).hasSize(1).contains(fooRedisCache.generateKey(foo.name));
         assertThat(userKeysAfterSet).hasSize(1).contains(userRedisCache.generateKey(user.login));
     }
+    <%_ } _%>
 }

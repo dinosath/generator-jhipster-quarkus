@@ -113,7 +113,6 @@ export const serverFiles = {
             templates: [
                 'config/Constants.java',
                 'config/JHipsterProperties.java',
-                'config/JsonbConfiguration.java',
                 'config/LocalDateProvider.java',
             ],
         }),
@@ -165,10 +164,6 @@ export const serverFiles = {
     serverJavaService: [
         javaMainPackageTemplatesBlock({
             templates: ['service/dto/ManagementInfoDTO.java', 'service/ManagementInfoService.java'],
-        }),
-        javaMainPackageTemplatesBlock({
-            condition: generator => generator.addCsvSerde,
-            templates: ['service/GenericCsvMessageBodyReader.java.java', 'service/GenericCsvMessageBodyWriter.java'],
         }),
         javaMainPackageTemplatesBlock({
             condition: generator => generator.databaseType === 'mongodb',

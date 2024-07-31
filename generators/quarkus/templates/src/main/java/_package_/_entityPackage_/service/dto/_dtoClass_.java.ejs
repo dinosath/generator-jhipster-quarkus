@@ -47,7 +47,6 @@ import java.time.Instant;
 <%_ if (anyFieldIsLocalDate) { _%>
 import java.time.LocalDate;
 import <%= packageName %>.config.Constants;
-import jakarta.json.bind.annotation.JsonbDateFormat;
 <%_ } _%>
 <%_ if (anyFieldIsZonedDateTime) { _%>
 import java.time.ZonedDateTime;
@@ -119,7 +118,6 @@ public class <%= dtoClass %> implements Serializable {
     @Lob
         <%_ } _%>
         <%_ if (fieldType === 'LocalDate') { _%>
-    @JsonbDateFormat(value = Constants.LOCAL_DATE_FORMAT)
         <%_ } _%>
         <%_ if (fieldTypeBlobContent !== 'text') { _%>
     public <%= fieldType %> <%= fieldName %>;
