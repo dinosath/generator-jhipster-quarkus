@@ -31,7 +31,7 @@
     @Transactional
     <%_ } _%>
     <%_ if (paginationAny) { _%>
-    public Response getAll<%= entityClassPlural %>(@BeanParam PageRequestVM pageRequest, @BeanParam SortRequestVM sortRequest, @Context UriInfo uriInfo<% if (reactive) { %>, ServerHttpRequest request<% } %><% if (fieldsContainNoOwnerOneToOne) { %>, @RequestParam(required = false) String filter<% } %><% if (fieldsContainOwnerManyToMany) { %>, @QueryParam(value = "eagerload") boolean eagerload<% } %>) {
+    public <% if (reactive) { %>Uni<<% } %>Response<% if (reactive) { %>><% } %> getAll<%= entityClassPlural %>(@BeanParam PageRequestVM pageRequest, @BeanParam SortRequestVM sortRequest, @Context UriInfo uriInfo<% if (fieldsContainNoOwnerOneToOne) { %>, @RequestParam(required = false) String filter<% } %><% if (fieldsContainOwnerManyToMany) { %>, @QueryParam(value = "eagerload") boolean eagerload<% } %>) {
         log.debug("REST request to get a page of <%= entityClassPlural %>");
         var page = pageRequest.toPage();
         var sort = sortRequest.toSort();
@@ -48,15 +48,22 @@
                 <%_ } _%>
         <%_ } else { _%>
             <%_ if (fieldsContainOwnerManyToMany) { _%>
-        Paged<<%= restClass %>> result;
-        if (eagerload) {
-            var <%= entityInstancePlural %> = <%= dataAccessObject %>.findAllWithEagerRelationships().page(page).list();
-            var totalCount = <%= dataAccessObject %>.findAll().count();
-            var pageCount = <%= dataAccessObject %>.findAll().page(page).pageCount();
-            result = new Paged<>(page.index, page.size, totalCount, pageCount, <%= entityInstancePlural %>);
-        } else {
-            result = new Paged<>(<%= dataAccessObject %>.findAll(sort).page(page));
-        }
+                <%_ if (reactive) { _%>
+                    Uni<Paged<<%= restClass %>>> result;
+                    PanacheQuery<<%= dataAccessObject %>> query = eagerload ? <%= dataAccessObject %>.findAllWithEagerRelationships().page(page) : <%= dataAccessObject %>.findAll(sort).page(page);
+                    result = fromPanacheQuery(query);
+                    return result.map(paged -> {
+                <%_ } else { _%>
+                    Paged<<%= restClass %>> result;
+                    if (eagerload) {
+                        var <%= entityInstancePlural %> = <%= dataAccessObject %>.findAllWithEagerRelationships().page(page).list();
+                        var totalCount = <%= dataAccessObject %>.findAll().count();
+                        var pageCount = <%= dataAccessObject %>.findAll().page(page).pageCount();
+                        result = new Paged<>(page.index, page.size, totalCount, pageCount, <%= entityInstancePlural %>);
+                    } else {
+                        result = new Paged<>(<%= dataAccessObject %>.findAll(sort).page(page));
+                    }
+                            <%_ } _%>
             <%_ } else { _%>
         var result = new Paged<>(<%= dataAccessObject %>.findAll(sort).page(page));
             <%_ } _%>
@@ -64,12 +71,19 @@
         result = result.map(<%= entityInstance %> -> <%= mapper %>.toDto(<%= entityInstance %>));
         <%_ } _%>
         <%_ } _%>
+        <%_ if (reactive) { _%>
+            var response = Response.ok().entity(paged.content);
+            response = PaginationUtil.withPaginationInfo(response, uriInfo, paged);
+            return response.build();
+        });
+        <%_ } else { _%>
         var response = Response.ok().entity(result.content);
         response = PaginationUtil.withPaginationInfo(response, uriInfo, result);
         return response.build();
+        <%_ } _%>
     }
     <%_ } else { _%>
-    public <%_ if (reactive) { _%>Uni<<%_ } _%>List<<%= restClass %>><%_ if (reactive) { _%>><%_ } _%> getAll<%= entityClassPlural %>(<% if (fieldsContainNoOwnerOneToOne) { %>@RequestParam(required = false) String filter<% } %><% if (fieldsContainOwnerManyToMany && fieldsContainNoOwnerOneToOne) { %>,<% } %><% if (fieldsContainOwnerManyToMany) { %>@QueryParam(value = "eagerload") boolean eagerload<% }%>) {
+    public <% if (reactive) { %> Uni<<% } %>List<<%= restClass %>><%_ if (reactive) { _%>><%_ } _%> getAll<%= entityClassPlural %>(<% if (fieldsContainNoOwnerOneToOne) { %>@RequestParam(required = false) String filter<% } %><% if (fieldsContainOwnerManyToMany && fieldsContainNoOwnerOneToOne) { %>,<% } %><% if (fieldsContainOwnerManyToMany) { %>@QueryParam(value = "eagerload") boolean eagerload<% }%>) {
         log.debug("REST request to get all <%= entityClassPlural %>");
         <%_ if (viaService) { _%>
         return <%= entityInstance %>Service.findAll();

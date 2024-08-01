@@ -37,9 +37,9 @@ _%>
             if (relationships[idx].relationshipType === 'many-to-many' && relationships[idx].ownerSide === true) { %> left join fetch <%= entityInstance %>.<%= relationships[idx].relationshipFieldNamePlural %><% } } %>");
     }
 
-    <%= finderPrefix %> Optional<<%= entityClass %>> findOneWithEagerRelationships(<%= primaryKeyType %> id) {
+    <%= finderPrefix %> <%- (reactive) ? "Uni" : "Optional" %><<%= entityClass %>> findOneWithEagerRelationships(<%= primaryKeyType %> id) {
         return find("select <%= entityInstance %> from <%= entityClass %> <%= entityInstance %><% for (idx in relationships) {
-            if (relationships[idx].relationshipType === 'many-to-many' && relationships[idx].ownerSide === true) { %> left join fetch <%= entityInstance %>.<%= relationships[idx].relationshipFieldNamePlural %><% } } %> where <%= entityInstance %>.id =?1", id).firstResultOptional();
+            if (relationships[idx].relationshipType === 'many-to-many' && relationships[idx].ownerSide === true) { %> left join fetch <%= entityInstance %>.<%= relationships[idx].relationshipFieldNamePlural %><% } } %> where <%= entityInstance %>.id =?1", id).<%- (reactive) ? "singleResult" : "firstResultOptional" %>();
     }
 <%_
     } else if (databaseType === 'mongodb' || databaseType === 'couchbase')  {

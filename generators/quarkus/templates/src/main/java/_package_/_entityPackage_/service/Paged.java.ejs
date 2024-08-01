@@ -19,7 +19,12 @@
 package <%= packageName %>.service;
 
 <%_ if (databaseType === 'sql') { _%>
+<%_ if (reactive) { _%>
+import io.quarkus.hibernate.reactive.panache.PanacheQuery;
+import io.smallrye.mutiny.Uni;
+<%_ } else { _%>
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
+<%_ } _%>    
 <%_ } else if(databaseType === 'mongodb') { _%>
 import io.quarkus.mongodb.panache.PanacheQuery;
 <%_ } _%>
@@ -39,9 +44,25 @@ public class Paged<T> {
 
     public final List<T> content;
 
+<%_ if (reactive) { _%>
+    public static <T> Uni<Paged<T>> fromPanacheQuery(PanacheQuery<T> query) {
+        // Retrieve all data asynchronously and combine into a single Uni
+        Uni<Long> totalCount = query.count();
+        Uni<List<T>> list = query.list();
+        Uni<Integer> pageCount = query.pageCount();
+        long index = query.page().index;
+        long size = query.page().size;
+
+        // Combine the results into a Paged object
+        return Uni.combine().all().unis(totalCount, list, pageCount).asTuple()
+            .map(tuple -> new Paged<>(index, size, tuple.getItem1(), tuple.getItem3(), tuple.getItem2()));
+    }
+<%_ } else { _%>
     public Paged(PanacheQuery<T> query) {
         this(query.page().index, query.page().size, query.count(), query.pageCount(), query.list());
     }
+<%_ } _%>    
+            
 
     public Paged(long index, long size, long totalCount, long pageCount, List<T> content) {
         this.index = index;

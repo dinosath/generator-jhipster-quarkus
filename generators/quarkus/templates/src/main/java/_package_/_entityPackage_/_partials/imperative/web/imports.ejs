@@ -17,7 +17,7 @@
  limitations under the License.
 -%>
 import static jakarta.ws.rs.core.UriBuilder.fromPath;
-
+import static io.github.jhipster.sample.service.Paged.fromPanacheQuery;
 <%_ if (!(dtoMapstruct && viaService)) { _%>
 import <%=packageName%>.domain.<%= entityClass %>;
 <%_ } _%>
@@ -63,9 +63,15 @@ import <%= packageName %>.web.rest.vm.SortRequestVM;
 import <%= packageName %>.web.util.PaginationUtil;
 <%_ } _%>
 <%_ if (reactive) { _%>
-import io.smallrye.mutiny.Uni;
+<%_ if (databaseType === 'sql') { %>
+import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
+import io.quarkus.hibernate.reactive.panache.PanacheQuery;
 <%_ } _%>
-
+import io.smallrye.mutiny.Uni;
+<%_ if (databaseType === 'sql') { %>
+import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
+<%_ } _%>    
+<%_ } _%>
 import jakarta.enterprise.context.ApplicationScoped;
 <%_ if (viaService || viaRepository || dtoMapstruct || databaseType === 'mongodb') { _%>
 import jakarta.inject.Inject;

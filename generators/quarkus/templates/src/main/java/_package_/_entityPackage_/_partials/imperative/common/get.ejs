@@ -17,10 +17,10 @@
  limitations under the License.
 -%>
 <%_
-const returnPrefix = returnDirectly ? 'return' : `Optional<${restClass}> ${restInstance} =`;
+const returnPrefix = returnDirectly ? 'return' : reactive ? `Uni<PanacheEntityBase> entityBaseUni =` : `Optional<${restClass}> ${restInstance} =`;
 _%>
 <%_ if (!viaService) { _%>
-    <%_ const finder = fieldsContainOwnerManyToMany ? 'findOneWithEagerRelationships(id)' : 'findByIdOptional(id)'; _%>
+    <%_ const finder = reactive ? 'findById(id)' : fieldsContainOwnerManyToMany ? 'findOneWithEagerRelationships(id)' : 'findByIdOptional(id)'; _%>
         <%- returnPrefix %> <%= dataAccessObject %>.<%= finder %><% if (!dtoMapstruct) { %>;<% } else { %>
             .map(<%= entityInstance %> -> <%= mapper %>.toDto((<%= entityClass %>) <%= entityInstance %>)); <% } %>
 <%_  } else { _%>

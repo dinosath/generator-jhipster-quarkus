@@ -26,7 +26,7 @@
     <%_ if (databaseType === 'sql' && !viaService) { _%>
     @Transactional
     <%_ } _%>
-    public Response create<%= entityClass %>(<% if (anyPropertyHasValidation) { %>@Valid <% } %><%= restClass %> <%= restInstance %>, @Context UriInfo uriInfo) {
+    public <% if (reactive) { %>Uni<<% } %>Response<% if (reactive) { %>><% } %> create<%= entityClass %>(<% if (anyPropertyHasValidation) { %>@Valid <% } %><%= restClass %> <%= restInstance %>, @Context UriInfo uriInfo) {
         log.debug("REST request to save <%= entityClass %> : {}", <%= restInstance %>);
         if (<%= restInstance %>.id != null) {
             throw new BadRequestAlertException("A new <%= entityInstance %> cannot already have an ID", ENTITY_NAME, "idexists");
@@ -41,7 +41,15 @@
         <%_ if (databaseType === 'mongodb' && !viaService) { _%>
         <%= entityClass %> result = <%= entityClass %>.findById(<%= restInstance %>.id);
         <%_ } _%>
-        var response = Response.created(fromPath(uriInfo.getPath()).path(result.id<% if (primaryKey.type !== 'String') { %>.toString()<% } %>).build()).entity(result);
-        HeaderUtil.createEntityCreationAlert(applicationName, <%= enableTranslation %>, ENTITY_NAME, result.id<% if (primaryKey.type !== 'String') { %>.toString()<% } %>).forEach(response::header);
-        return response.build();
+        <%_ if (reactive && databaseType === 'sql') { _%>
+            return result.map(result1 -> {
+                var response = Response.created(fromPath(uriInfo.getPath()).path(result1.id.toString()).build()).entity(result);
+                HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result1.id.toString()).forEach(response::header);
+                return response.build();
+            });
+        <%_ } else { _%>
+            var response = Response.created(fromPath(uriInfo.getPath()).path(result.id<% if (primaryKey.type !== 'String') { %>.toString()<% } %>).build()).entity(result);
+            HeaderUtil.createEntityCreationAlert(applicationName, <%= enableTranslation %>, ENTITY_NAME, result.id<% if (primaryKey.type !== 'String') { %>.toString()<% } %>).forEach(response::header);
+            return response.build();
+        <%_ } _%>
     }

@@ -27,7 +27,7 @@
     <%_ if (databaseType === 'sql' && !viaService) { _%>
     @Transactional
     <%_ } _%>
-    public  <%_ if (reactive) { _%>Uni<<%_ } _%>Response<%_ if (reactive) { _%>><%_ } _%> delete<%= entityClass %>(@PathParam("id") <%= primaryKeyType %> id) {
+    public  <% if (reactive) { %>Uni<<% } %>Response<% if (reactive) { %>><% } %> delete<%= entityClass %>(@PathParam("id") <%= primaryKeyType %> id) {
         log.debug("REST request to delete <%= entityClass %> : {}", id);
     <%_ if (reactive) { _%>
         return

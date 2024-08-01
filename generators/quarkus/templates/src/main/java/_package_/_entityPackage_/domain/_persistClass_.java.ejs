@@ -54,6 +54,8 @@ _%>
 <%_ if (databaseType === 'sql') { _%>
     <%_ if (reactive) { _%>
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
+import io.smallrye.mutiny.Uni;
+import java.time.Duration;
     <%} else { %>
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
     <%_ } _%>

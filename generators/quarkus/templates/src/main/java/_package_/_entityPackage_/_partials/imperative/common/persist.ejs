@@ -17,7 +17,7 @@
  limitations under the License.
 -%>
 <%_ if(databaseType === 'sql') { _%>
-    <%_ if(!viaRepository) { _%>
+    <%_ if(!viaRepository && !reactive) { _%>
     public <%= entityClass %> update() {
         return update(this);
     }
@@ -27,6 +27,7 @@
     }
     <%_ } _%>
 
+    <%_ if (!reactive) { _%>
     public <% if(!viaRepository) { %>static <% } %><%= entityClass %> update(<%= entityClass %> <%= entityInstance %>) {
         if (<%= entityInstance %> == null) {
             throw new IllegalArgumentException("<%= entityInstance %> can't be null");
@@ -46,16 +47,48 @@
         }
         return entity;
     }
+    <%_ } _%>
 
-    public <% if(!viaRepository) { %>static <% } %><%= entityClass %> persistOrUpdate(<%= entityClass %> <%= entityInstance %>) {
+    public <% if(!viaRepository) { %>static <% } %> <% if (reactive) { %>Uni<<% } %> <%= entityClass %> <% if (reactive) { %>><% } %> persistOrUpdate(<%= entityClass %> <%= entityInstance %>) {
         if (<%= entityInstance %> == null) {
             throw new IllegalArgumentException("<%= entityInstance %> can't be null");
         }
         if (<%= entityInstance %>.id == null) {
-            persist(<%= entityInstance %>);
-            return <%= entityInstance %>;
+            <%_ if (reactive) { _%>
+                return persist(<%= entityInstance %>)
+                .replaceWith(<%= entityInstance %>)
+                .ifNoItem()
+                .after(Duration.ofMillis(10000))
+                .fail()
+                .onFailure()
+                .transform(IllegalStateException::new);    
+            <%_ } else { _%>
+                persist(<%= entityInstance %>);
+                return <%= entityInstance %>;
+            <%_ } _%>                
         } else {
+        <%_ if (reactive) { _%>
+            Uni<<%= entityClass %>> uniById = findById(<%= entityInstance %>.id);
+            return uniById
+            .onItem().ifNotNull()
+            .transform(entity -> {
+                <%_
+                for (const field of fields.filter(field => !field.id)) {
+                _%>
+                entity.<%= field.propertyName %> = <%= entityInstance %>.<%= field.propertyName %>;
+                <%_ } _%>
+                <%_
+                for (const relationship of relationships) {
+                _%>
+                entity.<%= relationship.propertyName %> = <%= entityInstance %>.<%= relationship.propertyName %>;
+                <%_ } _%>    
+                return entity;
+            })
+            .replaceWith(<%= entityInstance %>)
+            .onFailure().recoverWithNull();
+        <%_ } else { _%>
             return update(<%= entityInstance %>);
+        <%_ } _%>                
         }
     }
 <%_ } _%>

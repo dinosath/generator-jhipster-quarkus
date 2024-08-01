@@ -28,7 +28,7 @@
     <%_ if (databaseType === 'sql' && fieldsContainOwnerManyToMany && !viaService) { _%>
     @Transactional
     <%_ } _%>
-    public Response<List<<%= restClass %>>> getAll<%= entityClassPlural %>(<%= entityClass %>Criteria criteria<% if (paginationAny) { %>, Pageable pageable<% if (reactive) { %>, ServerHttpRequest request<% } %><% } %>) {
+    public Response<List<<%= restClass %>>> getAll<%= entityClassPlural %>(<%= entityClass %>Criteria criteria<% if (paginationAny) { %>, Pageable pageable<% } %>) {
         log.debug("REST request to get <%= entityClassPlural %> by criteria: {}", criteria);
     <%_ if (pagination === 'no') { _%>
         List<<%= restClass %>> entityList = <%= entityInstance %>QueryService.findByCriteria(criteria);

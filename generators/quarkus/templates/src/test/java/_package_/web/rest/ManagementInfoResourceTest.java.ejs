@@ -51,12 +51,6 @@ public class ManagementInfoResourceTest {
 
     private static final TypeRef<ManagementInfoDTO> MANAGEMENT_INFO_DTO = new TypeRef<>() {};
 
-    @BeforeAll
-    static void jsonMapper() {
-        RestAssured.config =
-            RestAssured.config().objectMapperConfig(objectMapperConfig().defaultObjectMapper(TestUtil.jsonbObjectMapper()));
-    }
-
     @Test
     public void swaggerEnabled() {
         // Prepare test data

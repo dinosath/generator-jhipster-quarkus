@@ -27,8 +27,12 @@
     <%_ if (databaseType === 'sql' && isUsingMapsId === true && !viaService) { _%>
     @Transactional(readOnly = true)
     <%_ } %>
-    public Response get<%= entityClass %>(@PathParam("id") <%= primaryKeyType %> id) {
+    public <% if (reactive) { %>Uni<<% } %>Response<% if (reactive) { %>><% } %> get<%= entityClass %>(@PathParam("id") <%= primaryKeyType %> id) {
         log.debug("REST request to get <%= entityClass %> : {}", id);
 <%- include('../common/get', {...this, returnDirectly: false}); -%>
+    <%_ if (reactive) { _%>
+        return entityBaseUni.map(panacheEntityBase -> Response.ok(panacheEntityBase).build());
+    <%_ } else { _%>
         return ResponseUtil.wrapOrNotFound(<%= restInstance %>);
+    <%_ } _%>
     }

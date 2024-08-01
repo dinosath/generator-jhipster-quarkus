@@ -50,12 +50,6 @@ public class <%= entityClass%>ResourceTest {
     String databaseName;
 <%_ } _%>
 
-    @BeforeAll
-    static void jsonMapper() {
-        RestAssured.config =
-            RestAssured.config().objectMapperConfig(objectMapperConfig().defaultObjectMapper(TestUtil.jsonbObjectMapper()));
-    }
-
     @BeforeEach
     public void authenticateAdmin() {
         this.adminToken = TestUtil.getAdminToken();

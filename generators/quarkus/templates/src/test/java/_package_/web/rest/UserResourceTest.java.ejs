@@ -98,12 +98,6 @@ public class UserResourceTest {
     @ConfigProperty(name = "application.name")
     String applicationName;
 
-    @BeforeAll
-    static void jsonMapper() {
-        RestAssured.config =
-            RestAssured.config().objectMapperConfig(objectMapperConfig().defaultObjectMapper(TestUtil.jsonbObjectMapper()));
-    }
-
 <%_ if (databaseType === 'sql') { _%>
     @BeforeEach
     public void databaseFixture() {
